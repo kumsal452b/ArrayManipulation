@@ -1,0 +1,72 @@
+
+using System.Runtime.InteropServices;
+
+class ArraysTool
+{
+    private string reasonOfBreak = "";
+    private bool breakOfFlag = false;
+    int arrayManipulation(int n, int[,] queries)
+    {
+        var numberOfOperations = queries.GetLength(0);//This is number of opearations
+        var dim2 = queries.GetLength(1);//this is a,b and k it must be 3 to procced
+        if (n < 3 && n < Math.Pow(10, 7))
+        {
+            breakOfFlag = true;
+            reasonOfBreak = " n was not in suitable range. Watch out that range: 3<= n <=10^7 \n ";
+        }
+        if (1 > numberOfOperations && numberOfOperations > 2 * Math.Pow(10, 5))
+        {
+            breakOfFlag = true;
+            reasonOfBreak += " Number of operations was not in suitable size. Watch out that range: 1<= n <=2*10^5 \n ";
+        }
+        if (dim2 != 3)
+        {
+            breakOfFlag = true;
+            reasonOfBreak += " Layer of operations was not in suitable size. Watch out that range: {a,b,k} \n";
+        }
+        for (int i = 0; i < numberOfOperations; i++)
+        {
+            var theA = queries[i, 0];
+            var theB = queries[i, 1];
+            var theK = queries[i, 2];
+            if (!(1 <= theA && theA <= theB && theB <= n))
+            {
+                breakOfFlag = true;
+                reasonOfBreak += $" Layer {i} was not correct. Watch out that range: 1<=a<=b<=n  \n";
+            }
+            if (!(0 <= theK && theK <= Math.Pow(10, 9)))
+            {
+                breakOfFlag = true;
+                reasonOfBreak += $" Layer {i} parameter K was not correct. Watch out that range: 0<=k<=10^7 \n";
+            }
+        }
+
+        if (breakOfFlag)
+        {
+            Console.WriteLine(reasonOfBreak);
+            return -1;
+        }
+        // If everything good so far.Ready to go
+        //Create array
+        int[] theArray = Enumerable.Range(0, n).Select(x => 0).ToArray();
+
+        for (int i = 0; i < numberOfOperations; i++)
+        {
+            var theStartIndex = queries[i, 0];
+            var theEndIndex= queries[i, 1];
+            var theK= queries[i, 2];
+            for (int j = theStartIndex; j <=theEndIndex; j++)
+            {
+                theArray[j - 1] += theK;
+            }
+        }
+        return theArray.Max();
+    }
+    static void Main(String[] args)
+    {
+        ArraysTool theArraysTool = new ArraysTool();
+        int[,] instance = { { 1, 3, 100 }, { 2, 5, 100 }, { 3, 4, 100 }};
+        var theResult= theArraysTool.arrayManipulation(5, instance);
+        Console.WriteLine(theResult);
+    }
+}
